@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Morim - Sala do Professor</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="app">
+        <header class="header">
+            <div class="logo">
+                <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                    <circle cx="16" cy="16" r="15" stroke="currentColor" stroke-width="2"/>
+                    <path d="M10 16L14 20L22 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <span>Morim</span>
+            </div>
+            <div class="server-info" id="serverInfo">
+                <span class="status-indicator"></span>
+                <span id="serverUrl">Iniciando servidor...</span>
+                <button id="copyUrlBtn" class="btn-icon" title="Copiar URL">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                    </svg>
+                </button>
+            </div>
+        </header>
+
+        <main class="main">
+            <aside class="sidebar">
+                <nav class="nav">
+                    <button class="nav-item active" data-tab="dashboard">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="3" width="7" height="7" rx="1"/>
+                            <rect x="14" y="3" width="7" height="7" rx="1"/>
+                            <rect x="3" y="14" width="7" height="7" rx="1"/>
+                            <rect x="14" y="14" width="7" height="7" rx="1"/>
+                        </svg>
+                        <span>Dashboard</span>
+                    </button>
+                    <button class="nav-item" data-tab="quizzes">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                            <polyline points="14 2 14 8 20 8"/>
+                            <line x1="16" y1="13" x2="8" y2="13"/>
+                            <line x1="16" y1="17" x2="8" y2="17"/>
+                            <polyline points="10 9 9 9 8 9"/>
+                        </svg>
+                        <span>Quizzes</span>
+                    </button>
+                    <button class="nav-item" data-tab="assets">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                            <circle cx="8.5" cy="8.5" r="1.5"/>
+                            <polyline points="21 15 16 10 5 21"/>
+                        </svg>
+                        <span>Assets</span>
+                    </button>
+                    <button class="nav-item" data-tab="settings">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="3"/>
+                            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                        </svg>
+                        <span>Configurações</span>
+                    </button>
+                </nav>
+            </aside>
+
+            <section class="content" id="dashboardTab">
+                <div class="dashboard">
+                    <div class="dashboard-header">
+                        <h1>Sala do Professor</h1>
+                        <p>Gerencie seus jogos e acompanhe os jogadores em tempo real</p>
+                    </div>
+                    
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                                    <circle cx="9" cy="7" r="4"/>
+                                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                                    <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                                </svg>
+                            </div>
+                            <div class="stat-info">
+                                <span class="stat-value" id="totalQuizzes">0</span>
+                                <span class="stat-label">Quizzes Criados</span>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                                    <circle cx="9" cy="7" r="4"/>
+                                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                                    <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                                </svg>
+                            </div>
+                            <div class="stat-info">
+                                <span class="stat-value" id="activePlayers">0</span>
+                                <span class="stat-label">Jogadores Online</span>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r="10"/>
+                                    <polyline points="12 6 12 12 16 14"/>
+                                </svg>
+                            </div>
+                            <div class="stat-info">
+                                <span class="stat-value" id="activeGames">0</span>
+                                <span class="stat-label">Jogos Ativos</span>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polygon points="23 7 16 12 23 17 23 7"/>
+                                    <rect x="1" y="5" width="15" height="14" rx="2" ry="2"/>
+                                </svg>
+                            </div>
+                            <div class="stat-info">
+                                <span class="stat-value" id="totalSessions">0</span>
+                                <span class="stat-label">Sessões Totais</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="qr-section">
+                        <h2>Código de Acesso</h2>
+                        <div class="qr-container">
+                            <div id="qrCode" class="qr-code"></div>
+                            <div class="qr-info">
+                                <p>Compartilhe este QR Code ou a URL abaixo para que os jogadores entrem no jogo</p>
+                                <div class="url-display">
+                                    <input type="text" id="serverUrlInput" readonly>
+                                    <button id="copyUrlBtn2" class="btn btn-primary">Copiar</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="recent-games">
+                        <h2>Jogos Recentes</h2>
+                        <div id="recentGamesList" class="games-list">
+                            <p class="empty-state">Nenhum jogo criado ainda. Crie seu primeiro quiz na aba "Quizzes".</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="content hidden" id="quizzesTab">
+                <div class="quizzes-page">
+                    <div class="page-header">
+                        <h1>Meus Quizzes</h1>
+                        <button id="createQuizBtn" class="btn btn-primary">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="12" y1="5" x2="12" y2="19"/>
+                                <line x1="5" y1="12" x2="19" y2="12"/>
+                            </svg>
+                            Novo Quiz
+                        </button>
+                    </div>
+                    <div id="quizzesList" class="quizzes-grid">
+                        <div class="empty-state">
+                            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                <polyline points="14 2 14 8 20 8"/>
+                                <line x1="16" y1="13" x2="8" y2="13"/>
+                                <line x1="16" y1="17" x2="8" y2="17"/>
+                            </svg>
+                            <p>Nenhum quiz criado ainda</p>
+                            <button id="createFirstQuizBtn" class="btn btn-primary">Criar Primeiro Quiz</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="content hidden" id="assetsTab">
+                <div class="assets-page">
+                    <div class="page-header">
+                        <h1>Gerenciar Assets</h1>
+                    </div>
+                    <div class="assets-tabs">
+                        <button class="asset-tab-btn active" data-asset="avatars">Avatares</button>
+                        <button class="asset-tab-btn" data-asset="podiums">Pódium/Temas</button>
+                    </div>
+                    <div class="assets-content">
+                        <div id="avatarsAssets" class="asset-panel">
+                            <div class="asset-upload">
+                                <label class="upload-area" id="avatarUploadArea">
+                                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                        <polyline points="17 8 12 3 7 8"/>
+                                        <line x1="12" y1="3" x2="12" y2="15"/>
+                                    </svg>
+                                    <p>Arraste avatares aqui ou clique para selecionar</p>
+                                    <span class="upload-hint">PNG, JPG, GIF, SVG • Máx. 2MB cada</span>
+                                    <input type="file" id="avatarFileInput" accept="image/png,image/jpeg,image/gif,image/svg+xml" multiple hidden>
+                                </label>
+                            </div>
+                            <div id="avatarsList" class="assets-grid">
+                                <p class="empty-state">Nenhum avatar adicionado ainda</p>
+                            </div>
+                        </div>
+                        <div id="podiumsAssets" class="asset-panel hidden">
+                            <div class="asset-upload">
+                                <label class="upload-area" id="podiumUploadArea">
+                                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                        <polyline points="17 8 12 3 7 8"/>
+                                        <line x1="12" y1="3" x2="12" y2="15"/>
+                                    </svg>
+                                    <p>Arraste arquivos de áudio/temas aqui ou clique para selecionar</p>
+                                    <span class="upload-hint">MP3, WAV, OGG, JSON, CSS • Máx. 10MB cada</span>
+                                    <input type="file" id="podiumFileInput" accept="audio/*,application/json,text/css" multiple hidden>
+                                </label>
+                            </div>
+                            <div id="podiumsList" class="assets-grid">
+                                <p class="empty-state">Nenhum asset de pódium adicionado ainda</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="content hidden" id="settingsTab">
+                <div class="settings-page">
+                    <div class="page-header">
+                        <h1>Configurações</h1>
+                    </div>
+                    <div class="settings-sections">
+                        <div class="settings-section">
+                            <h2>Servidor</h2>
+                            <div class="setting-item">
+                                <label>Porta do Servidor</label>
+                                <input type="number" id="serverPort" value="8080" min="1024" max="65535">
+                            </div>
+                            <div class="setting-item">
+                                <label>IP da Rede Local</label>
+                                <input type="text" id="localIp" readonly>
+                            </div>
+                            <div class="setting-item">
+                                <label>URL Pública</label>
+                                <input type="text" id="publicUrl" readonly>
+                            </div>
+                        </div>
+                        <div class="settings-section">
+                            <h2>Jogo</h2>
+                            <div class="setting-item">
+                                <label>Tempo padrão por pergunta (segundos)</label>
+                                <input type="number" id="defaultQuestionTime" value="30" min="5" max="300">
+                            </div>
+                            <div class="setting-item">
+                                <label>Pontuação padrão por pergunta</label>
+                                <input type="number" id="defaultPoints" value="1000" min="100" max="10000">
+                            </div>
+                            <div class="setting-item toggle">
+                                <label>Embaralhar ordem das perguntas</label>
+                                <input type="checkbox" id="shuffleQuestions" checked>
+                            </div>
+                            <div class="setting-item toggle">
+                                <label>Embaralhar ordem das respostas</label>
+                                <input type="checkbox" id="shuffleAnswers" checked>
+                            </div>
+                            <div class="setting-item toggle">
+                                <label>Mostrar ranking após cada pergunta</label>
+                                <input type="checkbox" id="showLeaderboard" checked>
+                            </div>
+                        </div>
+                        <div class="settings-section">
+                            <h2>Aparência</h2>
+                            <div class="setting-item">
+                                <label>Tema</label>
+                                <select id="themeSelect">
+                                    <option value="dark">Escuro</option>
+                                    <option value="light">Claro</option>
+                                    <option value="system">Sistema</option>
+                                </select>
+                            </div>
+                            <div class="setting-item">
+                                <label>Cor primária</label>
+                                <input type="color" id="primaryColor" value="#6366f1">
+                            </div>
+                        </div>
+                        <div class="settings-section">
+                            <h2>Dados</h2>
+                            <div class="setting-item">
+                                <label>Diretório de dados</label>
+                                <input type="text" id="dataDir" readonly>
+                            </div>
+                            <button id="openDataDirBtn" class="btn btn-secondary">Abrir Pasta</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <div id="createQuizModal" class="modal hidden">
+        <div class="modal-overlay"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Criar Novo Quiz</h2>
+                <button class="modal-close" id="closeCreateQuizModal">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"/>
+                        <line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                </button>
+            </div>
+            <form id="createQuizForm">
+                <div class="form-group">
+                    <label for="quizTitle">Título do Quiz</label>
+                    <input type="text" id="quizTitle" required placeholder="Ex: Conhecimentos Gerais">
+                </div>
+                <div class="form-group">
+                    <label for="quizDescription">Descrição</label>
+                    <textarea id="quizDescription" rows="3" placeholder="Descreva sobre o que é este quiz..."></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" id="cancelCreateQuiz">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Criar Quiz</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="editQuizModal" class="modal hidden">
+        <div class="modal-overlay"></div>
+        <div class="modal-content large">
+            <div class="modal-header">
+                <h2 id="editQuizModalTitle">Editar Quiz</h2>
+                <button class="modal-close" id="closeEditQuizModal">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"/>
+                        <line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="quiz-editor">
+                <div class="quiz-editor-header">
+                    <div class="form-group">
+                        <label>Título</label>
+                        <input type="text" id="editQuizTitle">
+                    </div>
+                    <div class="form-group">
+                        <label>Descrição</label>
+                        <textarea id="editQuizDescription" rows="2"></textarea>
+                    </div>
+                </div>
+                <div class="questions-list" id="questionsList">
+                    <div class="empty-state">Nenhuma pergunta adicionada</div>
+                </div>
+                <button type="button" class="btn btn-secondary" id="addQuestionBtn">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="12" y1="5" x2="12" y2="19"/>
+                        <line x1="5" y1="12" x2="19" y2="12"/>
+                    </svg>
+                    Adicionar Pergunta
+                </button>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" id="deleteQuizBtn">Excluir Quiz</button>
+                <div>
+                    <button type="button" class="btn btn-secondary" id="cancelEditQuiz">Cancelar</button>
+                    <button type="button" class="btn btn-primary" id="saveQuizBtn">Salvar Quiz</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="questionModal" class="modal hidden">
+        <div class="modal-overlay"></div>
+        <div class="modal-content large">
+            <div class="modal-header">
+                <h2 id="questionModalTitle">Nova Pergunta</h2>
+                <button class="modal-close" id="closeQuestionModal">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"/>
+                        <line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                </button>
+            </div>
+            <form id="questionForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Tipo de Pergunta</label>
+                        <select id="questionType" required>
+                            <option value="single_choice">Escolha Única</option>
+                            <option value="multiple_choice">Múltipla Escolha</option>
+                            <option value="true_false">Verdadeiro/Falso</option>
+                            <option value="type_answer">Digitar Resposta</option>
+                            <option value="puzzle">Ordenar/Puzzle</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Tempo (segundos)</label>
+                        <input type="number" id="questionTime" value="30" min="5" max="300" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Pontos</label>
+                        <input type="number" id="questionPoints" value="1000" min="100" max="10000" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Texto da Pergunta</label>
+                    <textarea id="questionText" rows="3" required placeholder="Digite a pergunta..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Imagem (opcional - URL)</label>
+                    <input type="url" id="questionImage" placeholder="https://exemplo.com/imagem.png">
+                </div>
+                <div id="optionsContainer">
+                    <h3>Opções de Resposta</h3>
+                    <div id="optionsList"></div>
+                    <button type="button" class="btn btn-secondary" id="addOptionBtn">Adicionar Opção</button>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" id="cancelQuestion">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Salvar Pergunta</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="toastContainer" class="toast-container"></div>
+
+    <script type="module" src="app.js"></script>
+</body>
+</html>
