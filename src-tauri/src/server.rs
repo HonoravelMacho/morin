@@ -182,6 +182,8 @@ pub async fn start_server(state: Arc<AppState>, app_handle: tauri::AppHandle) ->
         .allow_methods(Any)
         .allow_headers(Any);
 
+    let mobile_dir = std::path::PathBuf::from("/home/tiagorabelo/morim/src/mobile");
+    
     let app = Router::new()
         .route("/ws", get(ws_handler))
         .route("/api/quizzes", get(list_quizzes_handler).post(create_quiz_handler))
@@ -197,6 +199,8 @@ pub async fn start_server(state: Arc<AppState>, app_handle: tauri::AppHandle) ->
         .nest_service("/assets/avatars", ServeDir::new(state.assets_dir.join("avatars")))
         .nest_service("/assets/podiums", ServeDir::new(state.assets_dir.join("podiums")))
         .nest_service("/quizzes", ServeDir::new(state.quizzes_dir.clone()))
+        .nest_service("/mobile", ServeDir::new(mobile_dir.clone()).append_index_html_on_directories(true))
+        .fallback_service(ServeDir::new(mobile_dir).append_index_html_on_directories(true))
         .layer(cors)
         .layer(TraceLayer::new_for_http())
         .with_state(state);

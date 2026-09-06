@@ -1,0 +1,36 @@
+{
+  "name": "Morim - Jogo de Quiz",
+  "short_name": "Morim",
+  "description": "Alternativa offline ao Kahoot para eventos e salas de aula",
+  "start_url": "/mobile/",
+  "scope": "/mobile/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#0a0f1a",
+  "theme_color": "#6366f1",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><circle cx='96' cy='96' r='90' fill='%236366f1'/><path d='M60 96L84 120L132 72' stroke='white' stroke-width='10' stroke-linecap='round' stroke-linejoin='round' fill='none'/></svg>",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><circle cx='256' cy='256' r='240' fill='%236366f1'/><path d='M160 256L224 320L352 192' stroke='white' stroke-width='24' stroke-linecap='round' stroke-linejoin='round' fill='none'/></svg>",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["education", "games", "entertainment"],
+  "screenshots": [],
+  "shortcuts": [
+    {
+      "name": "Entrar no Jogo",
+      "short_name": "Jogar",
+      "description": "Entrar em uma sala com PIN",
+      "url": "/mobile/",
+      "icons": [{ "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M19 12H5M12 19l-7-7 7-7' stroke='white' stroke-width='2' stroke-linecap='round' fill='none'/></svg>", "sizes": "96x96" }]
+    }
+  ]
+}

@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#6366f1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Morim">
+    <title>Morim - Entre no Jogo</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='15' fill='%236366f1'/><path d='M10 16L14 20L22 12' stroke='white' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round' fill='none'/></svg>">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'><circle cx='90' cy='90' r='85' fill='%236366f1'/><path d='M55 90L78 113L125 68' stroke='white' stroke-width='12' stroke-linecap='round' stroke-linejoin='round' fill='none'/></svg>">
+    <link rel="stylesheet" href="mobile.css">
+</head>
+<body>
+    <div id="app" class="app">
+        <!-- TELA 1: ENTRADA -->
+        <section id="screen-enter" class="screen active" data-screen="enter" role="main" aria-label="Entrar no jogo">
+            <header class="screen-header">
+                <div class="logo">
+                    <svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><circle cx="16" cy="16" r="15" stroke="currentColor" stroke-width="2"/><path d="M10 16L14 20L22 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    <span>Morim</span>
+                </div>
+                <p class="subtitle">Digite o PIN da sala</p>
+            </header>
+
+            <main class="screen-content">
+                <div class="pin-display" id="pinDisplay" aria-live="polite">
+                    <span class="pin-digit" data-index="0"></span>
+                    <span class="pin-digit" data-index="1"></span>
+                    <span class="pin-digit" data-index="2"></span>
+                    <span class="pin-digit" data-index="3"></span>
+                    <span class="pin-digit" data-index="4"></span>
+                    <span class="pin-digit" data-index="5"></span>
+                </div>
+
+                <div class="pin-keypad" role="group" aria-label="Teclado numérico para PIN">
+                    <button class="key" data-key="1" aria-label="1"><span>1</span></button>
+                    <button class="key" data-key="2" aria-label="2"><span>2</span></button>
+                    <button class="key" data-key="3" aria-label="3"><span>3</span></button>
+                    <button class="key" data-key="4" aria-label="4"><span>4</span></button>
+                    <button class="key" data-key="5" aria-label="5"><span>5</span></button>
+                    <button class="key" data-key="6" aria-label="6"><span>6</span></button>
+                    <button class="key" data-key="7" aria-label="7"><span>7</span></button>
+                    <button class="key" data-key="8" aria-label="8"><span>8</span></button>
+                    <button class="key" data-key="9" aria-label="9"><span>9</span></button>
+                    <button class="key" data-key="clear" aria-label="Limpar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button>
+                    <button class="key" data-key="0" aria-label="0"><span>0</span></button>
+                    <button class="key key-enter" data-key="enter" aria-label="Entrar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button>
+                </div>
+
+                <p class="error-message hidden" id="pinError" role="alert"></p>
+            </main>
+
+            <footer class="screen-footer">
+                <p>Desenvolvido por <a href="https://github.com/HonoravelMacho" target="_blank" rel="noopener">HonoravelMacho</a> • GPLv3</p>
+            </footer>
+        </section>
+
+        <!-- TELA 2: NOME E AVATAR -->
+        <section id="screen-profile" class="screen" data-screen="profile" role="main" aria-label="Criar perfil">
+            <header class="screen-header">
+                <button class="btn-back" id="backToPin" aria-label="Voltar ao PIN"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg></button>
+                <div class="logo">
+                    <svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><circle cx="16" cy="16" r="15" stroke="currentColor" stroke-width="2"/><path d="M10 16L14 20L22 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    <span>Morim</span>
+                </div>
+                <div style="width:44px"></div>
+            </header>
+
+            <main class="screen-content">
+                <h2>Quem está jogando?</h2>
+
+                <div class="avatar-grid" id="avatarGrid" role="group" aria-label="Escolha seu avatar">
+                    <!-- Avatares carregados dinamicamente -->
+                </div>
+
+                <div class="form-group">
+                    <label for="playerName" class="visually-hidden">Seu apelido</label>
+                    <input type="text" id="playerName" class="input-name" placeholder="Digite seu apelido" maxlength="20" autocomplete="off" autocapitalize="words" spellcheck="false" aria-label="Seu apelido">
+                    <p class="char-count"><span id="nameLength">0</span>/20</p>
+                </div>
+
+                <p class="error-message hidden" id="nameError" role="alert"></p>
+
+                <button class="btn btn-primary btn-full" id="btnJoinGame" disabled>
+                    <span>Entrar no Jogo</span>
+                    <svg class="btn-spinner hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10" stroke-opacity="0.25"/><path d="M12 2a10 10 0 0 1 10 10" stroke-linecap="round"/></svg>
+                </button>
+            </main>
+        </section>
+
+        <!-- TELA 3: SALA DE ESPERA -->
+        <section id="screen-waiting" class="screen" data-screen="waiting" role="main" aria-label="Sala de espera">
+            <header class="screen-header">
+                <div class="logo">
+                    <svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><circle cx="16" cy="16" r="15" stroke="currentColor" stroke-width="2"/><path d="M10 16L14 20L22 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    <span>Morim</span>
+                </div>
+                <div class="pin-badge" aria-label="PIN da sala"><span id="waitingPin">123456</span></div>
+            </header>
+
+            <main class="screen-content waiting-content">
+                <div class="waiting-animation" aria-hidden="true">
+                    <div class="pulse-ring"></div>
+                    <div class="pulse-ring"></div>
+                    <div class="pulse-ring"></div>
+                    <div class="player-avatar-large" id="myAvatarLarge"></div>
+                </div>
+
+                <h2>Aguardando o host iniciar...</h2>
+                <p class="waiting-subtitle">O jogo começará em breve</p>
+
+                <div class="players-preview" id="playersPreview" aria-label="Jogadores conectados">
+                    <!-- Lista de jogadores conectados -->
+                </div>
+
+                <div class="connection-status" id="connectionStatus">
+                    <span class="status-dot"></span>
+                    <span>Conectado</span>
+                </div>
+            </main>
+        </section>
+
+        <!-- TELA 4: JOGO - PERGUNTA -->
+        <section id="screen-question" class="screen" data-screen="question" role="main" aria-label="Pergunta do jogo">
+            <header class="game-header">
+                <div class="game-info">
+                    <span class="question-counter" id="questionCounter">Pergunta 1 de 10</span>
+                    <span class="player-score" id="playerScore">0 pts</span>
+                </div>
+                <div class="timer-container" id="timerContainer" aria-live="polite" aria-label="Tempo restante">
+                    <svg class="timer-bg" viewBox="0 0 64 64"><circle cx="32" cy="32" r="28" stroke="currentColor" stroke-width="4" fill="none" stroke-opacity="0.2"/></svg>
+                    <svg class="timer-progress" viewBox="0 0 64 64"><circle id="timerCircle" cx="32" cy="32" r="28" stroke="currentColor" stroke-width="4" fill="none" stroke-linecap="round" style="stroke-dasharray: 176; stroke-dashoffset: 0; transform: rotate(-90deg) translate(-64, 0);"/></svg>
+                    <span class="timer-text" id="timerText">30</span>
+                </div>
+            </header>
+
+            <main class="screen-content question-content">
+                <div class="question-card">
+                    <h2 class="question-text" id="questionText">Carregando pergunta...</h2>
+                    <div class="question-image hidden" id="questionImage"></div>
+                </div>
+
+                <div class="options-grid" id="optionsGrid" role="group" aria-label="Opções de resposta">
+                    <!-- Opções geradas dinamicamente -->
+                </div>
+
+                <div class="question-type-hint" id="typeHint"></div>
+            </main>
+        </section>
+
+        <!-- TELA 5: FEEDBACK RODADA -->
+        <section id="screen-feedback" class="screen" data-screen="feedback" role="main" aria-label="Resultado da rodada">
+            <header class="screen-header minimal">
+                <div class="logo small">
+                    <svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><circle cx="16" cy="16" r="15" stroke="currentColor" stroke-width="2"/><path d="M10 16L14 20L22 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    <span>Morim</span>
+                </div>
+            </header>
+
+            <main class="screen-content feedback-content">
+                <div class="feedback-animation" id="feedbackAnimation" aria-hidden="true"></div>
+
+                <h2 class="feedback-title" id="feedbackTitle">Acertou!</h2>
+                <p class="feedback-subtitle" id="feedbackSubtitle">+1000 pontos</p>
+
+                <div class="score-breakdown" id="scoreBreakdown">
+                    <div class="score-row">
+                        <span>Resposta correta</span>
+                        <span id="basePoints">+1000</span>
+                    </div>
+                    <div class="score-row bonus hidden" id="speedBonusRow">
+                        <span>⚡ Bônus de velocidade</span>
+                        <span id="speedBonus">+500</span>
+                    </div>
+                    <div class="score-row streak hidden" id="streakRow">
+                        <span>🔥 Sequência</span>
+                        <span id="streakBonus">x2</span>
+                    </div>
+                    <div class="score-row total">
+                        <span>Total da rodada</span>
+                        <span id="roundTotal">+1000</span>
+                    </div>
+                </div>
+
+                <div class="correct-answer hidden" id="correctAnswerDisplay">
+                    <p>Resposta correta: <strong id="correctAnswerText"></strong></p>
+                </div>
+
+                <div class="leaderboard-preview" id="leaderboardPreview">
+                    <h3>Ranking</h3>
+                    <ol id="leaderboardList"></ol>
+                </div>
+            </main>
+        </section>
+
+        <!-- TELA 6: FINAL DO JOGO -->
+        <section id="screen-final" class="screen" data-screen="final" role="main" aria-label="Fim de jogo">
+            <header class="screen-header minimal">
+                <div class="logo small">
+                    <svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><circle cx="16" cy="16" r="15" stroke="currentColor" stroke-width="2"/><path d="M10 16L14 20L22 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    <span>Morim</span>
+                </div>
+            </header>
+
+            <main class="screen-content final-content">
+                <div class="podium" id="podium">
+                    <div class="podium-place second">
+                        <div class="podium-avatar" id="podium2Avatar"></div>
+                        <div class="podium-name" id="podium2Name">—</div>
+                        <div class="podium-score" id="podium2Score">0 pts</div>
+                    </div>
+                    <div class="podium-place first">
+                        <div class="podium-avatar" id="podium1Avatar"></div>
+                        <div class="podium-name" id="podium1Name">—</div>
+                        <div class="podium-score" id="podium1Score">0 pts</div>
+                        <div class="crown" aria-hidden="true">👑</div>
+                    </div>
+                    <div class="podium-place third">
+                        <div class="podium-avatar" id="podium3Avatar"></div>
+                        <div class="podium-name" id="podium3Name">—</div>
+                        <div class="podium-score" id="podium3Score">0 pts</div>
+                    </div>
+                </div>
+
+                <div class="my-final-rank" id="myFinalRank">
+                    <span class="rank-label">Sua posição</span>
+                    <span class="rank-number" id="myRankNumber">—</span>
+                    <span class="rank-score" id="myFinalScore">0 pts</span>
+                </div>
+
+                <div class="final-stats" id="finalStats">
+                    <div class="stat"><span id="finalCorrect">0</span> Acertos</div>
+                    <div class="stat"><span id="finalAccuracy">0%</span> Precisão</div>
+                    <div class="stat"><span id="finalBestStreak">0</span> Melhor sequência</div>
+                </div>
+
+                <button class="btn btn-primary btn-full" id="btnPlayAgain">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+                    Jogar Novamente
+                </button>
+
+                <button class="btn btn-secondary btn-full" id="btnLeaveGame">Sair</button>
+            </main>
+        </section>
+
+        <!-- TELA DE ERRO/CONEXÃO -->
+        <section id="screen-error" class="screen" data-screen="error" role="alertdialog" aria-modal="true" aria-label="Erro de conexão">
+            <main class="screen-content error-content">
+                <div class="error-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                </div>
+                <h2>Conexão Perdida</h2>
+                <p id="errorMessage">Tentando reconectar...</p>
+                <div class="reconnect-spinner" aria-hidden="true"></div>
+                <button class="btn btn-primary" id="btnReconnect">Tentar Novamente</button>
+            </main>
+        </section>
+
+        <!-- TOAST CONTAINER -->
+        <div id="toastContainer" class="toast-container" aria-live="polite" aria-atomic="true"></div>
+    </div>
+
+    <script type="module" src="mobile.js"></script>
+</body>
+</html>
