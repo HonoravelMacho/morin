@@ -1,4 +1,4 @@
-name: "Morim Release"
+name: "Lançamento Morim"
 
 on:
   push:
@@ -6,10 +6,10 @@ on:
       - 'v*'
 
 env:
-  # Tauri action configuration
+  # Configuração de ação Tauri
   TAURI_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
   TAURI_API_TOKEN: ${{ secrets.TAURI_API_TOKEN }}
-  # Distro-specific configs
+  # Configurações específicas da distribuição
   DEB_ARCH: "amd64"
   RPM_ARCH: "x86_64"
   WINDOWS_ARCH: "x64"
@@ -73,16 +73,53 @@ jobs:
           fi
           cargo tauri build --release
 
-      - name: "Upload artifact"
+      - name: "Upload build artifacts"
         uses: actions/upload-artifact@v4
         with:
-          name: "${{ matrix.artifact_name }}"
+          name: "${{ matrix.artifact_name }}-build"
           path: |
             src-tauri/target/release/bundle/*
             src-tauri/target/release/install/*
           retention-days: 1
 
-  # === LINUX DEB ===
+  release:
+    name: "Create GitHub Release"
+    needs: build
+    runs-on: "ubuntu-latest"
+    permissions:
+      contents: write
+    steps:
+      - name: "Checkout code"
+        uses: actions/checkout@v4
+
+      - name: "Download build artifacts"
+        uses: actions/download-artifact@v4
+        with:
+          pattern: "*"
+          path: "artifacts"
+
+      - name: "Create GitHub Release"
+        env:
+          GITHUB_TOKEN: ${{ secrets.TAURI_GITHUB_TOKEN }}
+        run: |
+          REF=$(git describe --abbreviate=0 --tags)
+          VERSION=$(echo $REF | sed 's/^v//')
+          
+          echo "Creating release for version $VERSION"
+          
+          for file in artifacts/**/*; do
+            if [ -f "$file" ]; then
+              echo "Uploading $file"
+              gh release create "v$VERSION" --title "Morim v$VERSION" --notes "Release multi-plataforma" "$file" --clobber
+            fi
+          done
+
+      - name: "Verify release"
+        run: |
+          echo "Release tags available:"
+          git tag --sort=-version:refname | head -5
+
+  # LINUX .deb
   - name: "Package .deb (Debian/Ubuntu)"
     if: "matrix.name == 'Linux (deb)'"
     needs: build
@@ -116,25 +153,23 @@ jobs:
 
       - name: "Create .deb package"
         run: |
-          # Find the released binary
           BINARY=$(ls src-tauri/target/release/bundle/linux/morim* 2>/dev/null || find src-tauri/target/release -name "morim*" -type f | head -1)
           if [ -z "$BINARY" ]; then
             echo "Binary not found, checking alternative paths..."
             ls -la src-tauri/target/release/
           fi
-          # Create deb package using fpm
           fpm -s dir -t deb \
             -n "morim" \
             -v "${{ github.ref_name }}" \
             --url "https://github.com/HonoravelMacho/morin" \
             --description "Morim - Offline Open Source Kahoot alternative" \
             --category "Education" \
-            -p "${{ env.artifact_name }}.deb" \
+            -p "morim-${{ github.ref_name }}-linux-deb.deb" \
             "$BINARY=/usr/local/bin/morim" \
             "$BINARY.desktop=/usr/share/applications/morim.desktop" \
             || echo "deb packaging skipped, binary included in tauri bundle"
 
-  # === LINUX RPM ===
+  # LINUX .rpm
   - name: "Package .rpm (Fedora/RHEL)"
     if: "matrix.name == 'Linux (rpm)'"
     needs: build
@@ -162,10 +197,9 @@ jobs:
 
       - name: "Create .rpm package"
         run: |
-          # Tauri already packages rpms for Linux, artifact captured in build job
-          echo "RPM packaged by Tauri build"
+          echo "RPM packaged by Tauri build - artifact in build job"
 
-  # === LINUX TAR.GZ ===
+  # LINUX .tar.gz
   - name: "Package .tar.gz (Linux universal)"
     if: "matrix.name == 'Linux (tar.gz)'"
     needs: build
@@ -194,18 +228,14 @@ jobs:
       - name: "Create .tar.gz archive"
         run: |
           mkdir -p release_tmp
-          # Copy the binary and assets
           cp -r src-tauri/target/release/bundle/linux/* release_tmp/ 2>/dev/null || true
-          # Create archive
-          tar -czf "${{ env.artifact_name }}.tar.gz" -C release_tmp .
+          tar -czf "morim-${{ github.ref_name }}-linux-x64.tar.gz" -C release_tmp .
 
-  # === WINDOWS EXE ===
+  # WINDOWS .exe
   - name: "Package Windows .exe (NSIS installer)"
     if: "matrix.name == 'Windows (exe)'"
     needs: build
     runs-on: "windows-latest"
-    env:
-      NSIS_SCRIPT: "nsis/installer.nsi"
     steps:
       - name: "Checkout code"
         uses: actions/checkout@v4
@@ -236,22 +266,7 @@ jobs:
         run: |
           cargo tauri build --release
 
-      - name: "Upload Windows installer"
-        uses: actions/upload-artifact@v4
-        with:
-          name: "${{ env.artifact_name }}"
-          path: |
-            src-tauri/target/release/bundle/windows/morim.exe
-            src-tauri/target/release/install/*
-          retention-days: 7
-
-  # === WINDOWS NSIS ===
-  - name: "Verify NSIS installer"
-    if: "matrix.name == 'Windows (exe)'"
-    needs: build
-    runs-on: "windows-latest"
-    steps:
-      - name: "Verify installer exists"
+      - name: "Verify Windows installer"
         run: |
           if [ -f "src-tauri/target/release/bundle/windows/morim.exe" ]; then
             echo "✅ Installer Windows gerado com sucesso"
