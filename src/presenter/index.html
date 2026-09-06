@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Morim - Painel do Apresentador</title>
+    <link rel="stylesheet" href="presenter.css">
+</head>
+<body>
+    <div id="app" class="app">
+        <!-- HEADER FIXO -->
+        <header class="header" id="header">
+            <div class="header-left">
+                <div class="logo" id="headerLogo">
+                    <svg viewBox="0 0 32 32" fill="none" aria-hidden="true">
+                        <circle cx="16" cy="16" r="15" stroke="currentColor" stroke-width="2"/>
+                        <path d="M10 16L14 20L22 12" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <span>Morim</span>
+                    <span class="badge-presenter">APRESENTADOR</span>
+                </div>
+            </div>
+            <div class="header-center" id="headerCenter">
+                <!-- Connection status shown here -->
+            </div>
+            <div class="header-right">
+                <div class="connection-status" id="connectionStatus">
+                    <span class="status-dot" id="statusDot"></span>
+                    <span id="statusText">Conectando...</span>
+                </div>
+                <div class="player-count" id="playerCount" title="Jogadores conectados">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                        <circle cx="9" cy="7" r="4"/>
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                    </svg>
+                    <span class="count" id="playerCountValue">0</span>
+                </div>
+                <button class="btn-icon" id="btnFullscreen" title="Tela cheia (F11)" aria-label="Tela cheia">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M8 3H5a2 2 0 0 0-2 2v3M21 8V5a2 2 0 0 0-2-2h-3M3 16v3a2 2 0 0 0 2 2h3M16 21h3a2 2 0 0 0 2-2v-3"/>
+                    </svg>
+                </button>
+                <button class="btn-icon" id="btnSettings" title="Configurações" aria-label="Configurações">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="3"/>
+                        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                    </svg>
+                </button>
+            </div>
+        </header>
+
+        <!-- MAIN CONTENT AREA -->
+        <main class="main" id="main">
+            <!-- VIEW: LOBBY / WAITING ROOM -->
+            <section id="view-lobby" class="view active" data-view="lobby" role="main" aria-label="Sala de espera">
+                <div class="lobby-container">
+                    <!-- QR CODE PANEL -->
+                    <div class="lobby-panel qr-panel">
+                        <div class="panel-header">
+                            <h2>Entrada dos Jogadores</h2>
+                            <div class="pin-display-large" id="lobbyPin">— — — — — —</div>
+                        </div>
+                        <div class="qr-wrapper">
+                            <div class="qr-code-container" id="qrCodeContainer">
+                                <div class="qr-placeholder" id="qrPlaceholder">
+                                    <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                                        <rect x="8" y="8" width="48" height="48" rx="4" stroke-dasharray="8 4"/>
+                                        <path d="M16 16h8M16 24h8M16 32h8M16 40h8M40 16h8M40 24h8M40 32h8M40 40h8" stroke-linecap="round"/>
+                                    </svg>
+                                    <p>Gerando QR Code...</p>
+                                </div>
+                            </div>
+                            <div class="qr-info">
+                                <p class="qr-instruction">Aponte a câmera do celular</p>
+                                <p class="qr-url" id="qrUrl">http://192.168.x.x:8080/mobile/</p>
+                                <button class="btn btn-secondary" id="btnCopyUrl">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                                    Copiar Link
+                                </button>
+                            </div>
+                        </div>
+                        <div class="waiting-message" id="waitingMessage">
+                            <div class="pulse-ring"></div>
+                            <div class="pulse-ring"></div>
+                            <div class="pulse-ring"></div>
+                            <p>Aguardando jogadores entrarem...</p>
+                        </div>
+                    </div>
+
+                    <!-- PLAYERS LIST PANEL -->
+                    <div class="lobby-panel players-panel">
+                        <div class="panel-header">
+                            <h2>Jogadores Conectados</h2>
+                            <span class="player-badge" id="playerBadge">0</span>
+                        </div>
+                        <div class="players-grid" id="playersGrid">
+                            <div class="empty-players" id="emptyPlayers">
+                                <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                                    <path d="M16 48v-8a8 8 0 0 1 16 0v8M32 32a10 10 0 1 0 0-20 10 10 0 0 0 0 20z"/>
+                                    <path d="M48 48v-8a8 8 0 0 0-16 0v8"/>
+                                </svg>
+                                <p>Nenhum jogador conectado</p>
+                                <span>O contador atualiza em tempo real</span>
+                            </div>
+                        </div>
+                        <div class="panel-actions">
+                            <button class="btn btn-primary btn-lg" id="btnStartGame" disabled>
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                                <span>Iniciar Jogo</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- VIEW: QUIZ SELECTOR -->
+            <section id="view-quiz-select" class="view" data-view="quiz-select" role="main" aria-label="Selecionar Quiz">
+                <div class="quiz-select-container">
+                    <div class="view-header">
+                        <button class="btn-back" id="backToLobby" aria-label="Voltar à sala">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+                            <span>Sala de Espera</span>
+                        </button>
+                        <h1>Selecionar Quiz</h1>
+                    </div>
+                    <div class="quiz-list" id="quizList">
+                        <div class="loading-quizzes">
+                            <div class="spinner"></div>
+                            <p>Carregando quizzes...</p>
+                        </div>
+                    </div>
+                    <div class="quiz-select-footer">
+                        <button class="btn btn-secondary" id="btnRefreshQuizzes">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+                            Atualizar
+                        </button>
+                        <button class="btn btn-primary" id="btnCreateNewQuiz">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                            Novo Quiz
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- VIEW: QUIZ CONFIG (Sections) -->
+            <section id="view-quiz-config" class="view" data-view="quiz-config" role="main" aria-label="Configurar Quiz">
+                <div class="quiz-config-container">
+                    <div class="view-header">
+                        <button class="btn-back" id="backToQuizSelect" aria-label="Voltar aos quizzes">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+                            <span>Quizzes</span>
+                        </button>
+                        <h1 id="configQuizTitle">Configurar Quiz</h1>
+                    </div>
+                    <div class="config-content">
+                        <div class="config-panel">
+                            <h3>Estrutura do Quiz</h3>
+                            <div class="quiz-meta" id="quizMeta">
+                                <div class="meta-item"><span class="meta-label">Perguntas</span><span class="meta-value" id="metaQuestions">0</span></div>
+                                <div class="meta-item"><span class="meta-label">Seções detectadas</span><span class="meta-value" id="metaSections">0</span></div>
+                                <div class="meta-item"><span class="meta-label">Tempo total estimado</span><span class="meta-value" id="metaTime">0 min</span></div>
+                            </div>
+                            <div class="sections-config" id="sectionsConfig">
+                                <h4>Configurar Seções</h4>
+                                <p class="config-hint">Agrupe perguntas em seções temáticas. Cada seção terá seu pódio parcial.</p>
+                                <div class="sections-list" id="sectionsList"></div>
+                                <button class="btn btn-secondary btn-sm" id="btnAutoSections">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 9h6v6H9z"/></svg>
+                                    Auto-dividir (5 por seção)
+                                </button>
+                            </div>
+                        </div>
+                        <div class="config-panel settings-panel">
+                            <h3>Configurações da Partida</h3>
+                            <div class="setting-group">
+                                <label>Embaralhar perguntas</label>
+                                <label class="toggle"><input type="checkbox" id="settingShuffleQuestions" checked><span class="toggle-slider"></span></label>
+                            </div>
+                            <div class="setting-group">
+                                <label>Embaralhar alternativas</label>
+                                <label class="toggle"><input type="checkbox" id="settingShuffleAnswers" checked><span class="toggle-slider"></span></label>
+                            </div>
+                            <div class="setting-group">
+                                <label>Mostrar ranking após cada pergunta</label>
+                                <label class="toggle"><input type="checkbox" id="settingShowRanking" checked><span class="toggle-slider"></span></label>
+                            </div>
+                            <div class="setting-group">
+                                <label>Tempo extra por pergunta (segundos)</label>
+                                <input type="number" id="settingExtraTime" value="0" min="0" max="60" step="5">
+                            </div>
+                            <div class="setting-group">
+                                <label>Tema do Pódio</label>
+                                <select id="settingPodiumTheme">
+                                    <option value="default">Padrão</option>
+                                    <option value="celebration">Celebração</option>
+                                    <option value="minimal">Mínimo</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="config-actions">
+                        <button class="btn btn-secondary" id="btnCancelConfig">Cancelar</button>
+                        <button class="btn btn-primary btn-lg" id="btnConfirmConfig">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                            <span>Iniciar Partida</span>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- VIEW: GAME PLAY -->
+            <section id="view-game" class="view" data-view="game" role="main" aria-label="Jogo em andamento">
+                <!-- TOP BAR: Section progress -->
+                <div class="game-top-bar" id="gameTopBar">
+                    <div class="section-progress" id="sectionProgress">
+                        <div class="section-indicator" id="sectionIndicator">Seção 1 de 3</div>
+                        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+                        <div class="question-counter" id="questionCounter">Pergunta 1 de 5</div>
+                    </div>
+                    <div class="game-timer-large" id="gameTimerLarge">
+                        <svg viewBox="0 0 80 80"><circle cx="40" cy="40" r="36" stroke="currentColor" stroke-width="6" fill="none" stroke-opacity="0.15"/><circle id="timerCircleLarge" cx="40" cy="40" r="36" stroke="currentColor" stroke-width="6" fill="none" stroke-linecap="round" style="stroke-dasharray: 226; stroke-dashoffset: 0; transform: rotate(-90deg) translate(-80, 0);"/></svg>
+                        <span id="timerTextLarge">30</span>
+                    </div>
+                </div>
+
+                <!-- QUESTION PHASE -->
+                <div class="game-phase" id="phaseQuestion" data-phase="question">
+                    <div class="question-display">
+                        <div class="question-header">
+                            <span class="question-number" id="displayQuestionNum">Pergunta 1</span>
+                            <span class="question-points" id="displayQuestionPoints">1000 pts</span>
+                        </div>
+                        <h1 class="question-text" id="displayQuestionText">Carregando pergunta...</h1>
+                        <div class="question-image-container" id="questionImageContainer"></div>
+                    </div>
+                    <div class="answers-chart-container" id="answersChartContainer" aria-live="polite">
+                        <h3>Respostas em tempo real</h3>
+                        <div class="chart-bars" id="chartBars"></div>
+                        <div class="chart-legend" id="chartLegend"></div>
+                    </div>
+                </div>
+
+                <!-- ANSWER REVEAL PHASE -->
+                <div class="game-phase hidden" id="phaseReveal" data-phase="reveal">
+                    <div class="reveal-container">
+                        <div class="reveal-animation" id="revealAnimation"></div>
+                        <h2 class="reveal-title" id="revealTitle">Resposta Correta</h2>
+                        <div class="correct-answer-display" id="correctAnswerDisplay">
+                            <div class="answer-option correct" id="correctOption"></div>
+                        </div>
+                        <div class="stats-row">
+                            <div class="stat-box">
+                                <span class="stat-value" id="statCorrect">0</span>
+                                <span class="stat-label">Acertaram</span>
+                            </div>
+                            <div class="stat-box">
+                                <span class="stat-value" id="statWrong">0</span>
+                                <span class="stat-label">Erraram</span>
+                            </div>
+                            <div class="stat-box">
+                                <span class="stat-value" id="statAvgTime">0s</span>
+                                <span class="stat-label">Tempo médio</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="section-leaderboard" id="sectionLeaderboard">
+                        <h3>Ranking Parcial</h3>
+                        <ol class="leaderboard-list" id="leaderboardList"></ol>
+                    </div>
+                </div>
+
+                <!-- SECTION PODIUM PHASE -->
+                <div class="game-phase hidden" id="phaseSectionPodium" data-phase="section-podium">
+                    <div class="podium-container" id="sectionPodium">
+                        <div class="podium-title">Pódio da Seção 1</div>
+                        <div class="podium-animation" id="podiumAnimation"></div>
+                        <div class="podium-places" id="podiumPlaces"></div>
+                        <button class="btn btn-primary btn-lg" id="btnNextSection">Próxima Seção</button>
+                    </div>
+                </div>
+
+                <!-- FINAL PODIUM PHASE -->
+                <div class="game-phase hidden" id="phaseFinalPodium" data-phase="final-podium">
+                    <div class="final-podium-container">
+                        <div class="final-podium-animation" id="finalPodiumAnimation"></div>
+                        <h1 class="final-title">🏆 CAMPEÃO 🏆</h1>
+                        <div class="final-podium" id="finalPodium"></div>
+                        <div class="final-full-ranking" id="finalFullRanking"></div>
+                        <div class="final-actions">
+                            <button class="btn btn-primary btn-lg" id="btnNewGame">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+                                Nova Partida
+                            </button>
+                            <button class="btn btn-secondary btn-lg" id="btnExportResults">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                                Exportar Resultados
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- BOTTOM CONTROLS -->
+                <div class="game-controls" id="gameControls">
+                    <button class="btn btn-secondary" id="btnPrevQuestion" disabled>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+                        Anterior
+                    </button>
+                    <div class="control-center">
+                        <button class="btn btn-primary btn-lg" id="btnNextPhase" data-action="start-timer">
+                            <svg class="btn-icon-play" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                            <svg class="btn-icon-reveal hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                            <span id="btnNextPhaseText">Iniciar Cronômetro</span>
+                        </button>
+                    </div>
+                    <button class="btn btn-secondary" id="btnNextQuestion" disabled>
+                        Próxima
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                    </button>
+                </div>
+            </section>
+
+            <!-- VIEW: SETTINGS -->
+            <section id="view-settings" class="view" data-view="settings" role="main" aria-label="Configurações">
+                <div class="settings-container">
+                    <div class="view-header">
+                        <h1>Configurações</h1>
+                    </div>
+                    <div class="settings-grid">
+                        <div class="settings-panel">
+                            <h3>Servidor</h3>
+                            <div class="setting-row">
+                                <label>IP Local</label>
+                                <input type="text" id="setLocalIp" readonly>
+                            </div>
+                            <div class="setting-row">
+                                <label>Porta</label>
+                                <input type="number" id="setPort" value="8080" min="1024" max="65535">
+                            </div>
+                            <div class="setting-row">
+                                <label>URL Pública</label>
+                                <input type="text" id="setPublicUrl" readonly>
+                            </div>
+                            <button class="btn btn-secondary" id="btnRestartServer">Reiniciar Servidor</button>
+                        </div>
+                        <div class="settings-panel">
+                            <h3>Jogo</h3>
+                            <div class="setting-row">
+                                <label>Tempo padrão por pergunta (s)</label>
+                                <input type="number" id="setDefaultTime" value="30" min="5" max="300">
+                            </div>
+                            <div class="setting-row">
+                                <label>Pontos base por pergunta</label>
+                                <input type="number" id="setBasePoints" value="1000" min="100" max="10000" step="100">
+                            </div>
+                            <div class="setting-row">
+                                <label>Multiplicador de sequência</label>
+                                <input type="number" id="setStreakMultiplier" value="1.5" min="1" max="3" step="0.1">
+                            </div>
+                        </div>
+                        <div class="settings-panel">
+                            <h3>Exibição</h3>
+                            <div class="setting-row">
+                                <label>Tema</label>
+                                <select id="setTheme">
+                                    <option value="dark">Escuro</option>
+                                    <option value="light">Claro</option>
+                                </select>
+                            </div>
+                            <div class="setting-row">
+                                <label>Cor Primária</label>
+                                <input type="color" id="setPrimaryColor" value="#6366f1">
+                            </div>
+                            <div class="setting-row">
+                                <label>Animations</label>
+                                <label class="toggle"><input type="checkbox" id="setAnimations" checked><span class="toggle-slider"></span></label>
+                            </div>
+                            <div class="setting-row">
+                                <label>Sons do Pódio</label>
+                                <label class="toggle"><input type="checkbox" id="setPodiumSounds" checked><span class="toggle-slider"></span></label>
+                            </div>
+                        </div>
+                        <div class="settings-panel">
+                            <h3>Dados</h3>
+                            <div class="setting-row">
+                                <label>Diretório de Quizzes</label>
+                                <input type="text" id="setQuizzesDir" readonly>
+                            </div>
+                            <div class="setting-row">
+                                <label>Diretório de Assets</label>
+                                <input type="text" id="setAssetsDir" readonly>
+                            </div>
+                            <button class="btn btn-secondary" id="btnOpenQuizzesDir">Abrir Pasta Quizzes</button>
+                            <button class="btn btn-secondary" id="btnOpenAssetsDir">Abrir Pasta Assets</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- MODALS -->
+        <div class="modal-overlay hidden" id="modalOverlay"></div>
+
+        <!-- Quiz Card Modal -->
+        <div class="modal hidden" id="modalQuizCard" role="dialog" aria-modal="true" aria-labelledby="modalQuizTitle">
+            <div class="modal-content large">
+                <div class="modal-header">
+                    <h2 id="modalQuizTitle">Detalhes do Quiz</h2>
+                    <button class="modal-close" id="closeQuizModal" aria-label="Fechar">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    </button>
+                </div>
+                <div class="modal-body" id="quizModalBody"></div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" id="btnModalCancel">Cancelar</button>
+                    <button class="btn btn-primary" id="btnModalSelect">Selecionar</button>
+                    <button class="btn btn-danger hidden" id="btnModalDelete">Excluir</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Confirm Modal -->
+        <div class="modal hidden" id="modalConfirm" role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 id="confirmTitle">Confirmar</h2>
+                </div>
+                <div class="modal-body">
+                    <p id="confirmMessage"></p>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" id="btnConfirmCancel">Cancelar</button>
+                    <button class="btn btn-danger" id="btnConfirmOk">Confirmar</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Toast Container -->
+        <div class="toast-container" id="toastContainer" aria-live="polite" aria-atomic="true"></div>
+
+        <!-- Audio elements for podium sounds -->
+        <audio id="audioFanfare" preload="auto"></audio>
+        <audio id="audioApplause" preload="auto"></audio>
+        <audio id="audioDrumroll" preload="auto"></audio>
+    </div>
+
+    <script type="module" src="presenter.js"></script>
+</body>
+</html>
