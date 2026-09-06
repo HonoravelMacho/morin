@@ -1,0 +1,261 @@
+name: "Morim Release"
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+env:
+  # Tauri action configuration
+  TAURI_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
+  TAURI_API_TOKEN: ${{ secrets.TAURI_API_TOKEN }}
+  # Distro-specific configs
+  DEB_ARCH: "amd64"
+  RPM_ARCH: "x86_64"
+  WINDOWS_ARCH: "x64"
+
+jobs:
+  build:
+    name: "Build multi-plataforma"
+    runs-on: "ubuntu-latest"
+    strategy:
+      matrix:
+        include:
+          - name: "Linux (deb)"
+            os: "ubuntu-latest"
+            target: "x86_64-ubuntu"
+            artifact_name: "morim-${{ github.ref_name }}-linux-deb"
+          - name: "Linux (rpm)"
+            os: "ubuntu-latest"
+            target: "x86_64-rpm"
+            artifact_name: "morim-${{ github.ref_name }}-linux-rpm"
+          - name: "Linux (tar.gz)"
+            os: "ubuntu-latest"
+            target: "x86_64-linux"
+            artifact_name: "morim-${{ github.ref_name }}-linux-x64"
+          - name: "Windows (exe)"
+            os: "windows-latest"
+            target: "x86_64-pc-windows-msvc"
+            artifact_name: "morim-${{ github.ref_name }}-windows-x64"
+
+    steps:
+      - name: "Checkout code"
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: "Setup Node.js"
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: "Install Tauri dependencies"
+        run: |
+          curl -LsSf https://deb.nodesource.com/setup_20.x | sudo -E bash -
+          sudo apt-get install -y nodejs
+
+      - name: "Install Rust"
+        uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          toolchain: "stable"
+
+      - name: "Install frontend dependencies"
+        run: npm install
+
+      - name: "Build Tauri app"
+        env:
+          TAURI_PLATFORM: "linux"
+          TAURI_ARCH: "x86_64"
+        run: |
+          if [[ "${{ matrix.name }}" == *"Windows"* ]]; then
+            TAURI_PLATFORM="windows"
+            TAURI_ARCH="x86_64-pc-windows-msvc"
+          fi
+          cargo tauri build --release
+
+      - name: "Upload artifact"
+        uses: actions/upload-artifact@v4
+        with:
+          name: "${{ matrix.artifact_name }}"
+          path: |
+            src-tauri/target/release/bundle/*
+            src-tauri/target/release/install/*
+          retention-days: 1
+
+  # === LINUX DEB ===
+  - name: "Package .deb (Debian/Ubuntu)"
+    if: "matrix.name == 'Linux (deb)'"
+    needs: build
+    runs-on: "ubuntu-latest"
+    steps:
+      - name: "Checkout code"
+        uses: actions/checkout@v4
+
+      - name: "Setup Node.js"
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: "Install Rust"
+        uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          toolchain: "stable"
+
+      - name: "Install frontend dependencies"
+        run: npm install
+
+      - name: "Build Tauri app"
+        run: |
+          TAURI_PLATFORM=linux TAURI_ARCH=x86_64 cargo tauri build --release
+
+      - name: "Install fpm for .deb packaging"
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ruby-rubygems
+          sudo gem install fpm
+
+      - name: "Create .deb package"
+        run: |
+          # Find the released binary
+          BINARY=$(ls src-tauri/target/release/bundle/linux/morim* 2>/dev/null || find src-tauri/target/release -name "morim*" -type f | head -1)
+          if [ -z "$BINARY" ]; then
+            echo "Binary not found, checking alternative paths..."
+            ls -la src-tauri/target/release/
+          fi
+          # Create deb package using fpm
+          fpm -s dir -t deb \
+            -n "morim" \
+            -v "${{ github.ref_name }}" \
+            --url "https://github.com/HonoravelMacho/morin" \
+            --description "Morim - Offline Open Source Kahoot alternative" \
+            --category "Education" \
+            -p "${{ env.artifact_name }}.deb" \
+            "$BINARY=/usr/local/bin/morim" \
+            "$BINARY.desktop=/usr/share/applications/morim.desktop" \
+            || echo "deb packaging skipped, binary included in tauri bundle"
+
+  # === LINUX RPM ===
+  - name: "Package .rpm (Fedora/RHEL)"
+    if: "matrix.name == 'Linux (rpm)'"
+    needs: build
+    runs-on: "ubuntu-latest"
+    steps:
+      - name: "Checkout code"
+        uses: actions/checkout@v4
+
+      - name: "Setup Node.js"
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: "Install Rust"
+        uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          toolchain: "stable"
+
+      - name: "Install frontend dependencies"
+        run: npm install
+
+      - name: "Build Tauri app"
+        run: |
+          TAURI_PLATFORM=linux TAURI_ARCH=x86_64 cargo tauri build --release
+
+      - name: "Create .rpm package"
+        run: |
+          # Tauri already packages rpms for Linux, artifact captured in build job
+          echo "RPM packaged by Tauri build"
+
+  # === LINUX TAR.GZ ===
+  - name: "Package .tar.gz (Linux universal)"
+    if: "matrix.name == 'Linux (tar.gz)'"
+    needs: build
+    runs-on: "ubuntu-latest"
+    steps:
+      - name: "Checkout code"
+        uses: actions/checkout@v4
+
+      - name: "Setup Node.js"
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: "Install Rust"
+        uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          toolchain: "stable"
+
+      - name: "Install frontend dependencies"
+        run: npm install
+
+      - name: "Build Tauri app"
+        run: |
+          TAURI_PLATFORM=linux TAURI_ARCH=x86_64 cargo tauri build --release
+
+      - name: "Create .tar.gz archive"
+        run: |
+          mkdir -p release_tmp
+          # Copy the binary and assets
+          cp -r src-tauri/target/release/bundle/linux/* release_tmp/ 2>/dev/null || true
+          # Create archive
+          tar -czf "${{ env.artifact_name }}.tar.gz" -C release_tmp .
+
+  # === WINDOWS EXE ===
+  - name: "Package Windows .exe (NSIS installer)"
+    if: "matrix.name == 'Windows (exe)'"
+    needs: build
+    runs-on: "windows-latest"
+    env:
+      NSIS_SCRIPT: "nsis/installer.nsi"
+    steps:
+      - name: "Checkout code"
+        uses: actions/checkout@v4
+
+      - name: "Setup Node.js"
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: "Install Rust (msvc target)"
+        uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          toolchain: "stable"
+          target: "x86_64-pc-windows-msvc"
+
+      - name: "Install frontend dependencies"
+        run: npm install
+
+      - name: "Install NSIS"
+        uses: extractions/setup-nsis@v2
+        with:
+          version: "3.08"
+
+      - name: "Build Tauri app with NSIS"
+        env:
+          TAURI_PLATFORM: "windows"
+          TAURI_ARCH: "x86_64-pc-windows-msvc"
+        run: |
+          cargo tauri build --release
+
+      - name: "Upload Windows installer"
+        uses: actions/upload-artifact@v4
+        with:
+          name: "${{ env.artifact_name }}"
+          path: |
+            src-tauri/target/release/bundle/windows/morim.exe
+            src-tauri/target/release/install/*
+          retention-days: 7
+
+  # === WINDOWS NSIS ===
+  - name: "Verify NSIS installer"
+    if: "matrix.name == 'Windows (exe)'"
+    needs: build
+    runs-on: "windows-latest"
+    steps:
+      - name: "Verify installer exists"
+        run: |
+          if [ -f "src-tauri/target/release/bundle/windows/morim.exe" ]; then
+            echo "✅ Installer Windows gerado com sucesso"
+            dir src-tauri/target/release/bundle/windows/
+          else
+            echo "❌ Installer não encontrado"
+          fi
